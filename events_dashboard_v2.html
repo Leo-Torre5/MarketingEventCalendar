@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events Collateral Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0c0e14;
+    --surface: #13151e;
+    --surface2: #1a1d2a;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #6b7080;
+    --c1: #f4a853;
+    --c2: #7b6ef6;
+    --c3: #4ec9a4;
+    --c4: #f06a8a;
+    --c5: #5bbcf8;
+    --madison: #f4a853;
+    --courtney: #c084fc;
+    --leo: #4ec9a4;
+    --team: #f06a8a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 40px 48px 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.9rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h1 span { color: var(--c1); font-style: italic; }
+
+  .header-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  /* ── VIEW TOGGLE ── */
+  .view-toggle {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .view-btn {
+    padding: 8px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .view-btn.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  .view-btn svg { opacity: 0.6; }
+  .view-btn.active svg { opacity: 1; }
+
+  /* ── LEGEND ── */
+  .legends {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .legend-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-sq  { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  .divider { height: 1px; background: var(--border); margin: 28px 48px; }
+
+  /* ── SUMMARY CARDS ── */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 0 48px 28px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .summary-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .summary-card:nth-child(1)::after { background: var(--c1); }
+  .summary-card:nth-child(2)::after { background: var(--c2); }
+  .summary-card:nth-child(3)::after { background: var(--c3); }
+  .summary-card:nth-child(4)::after { background: var(--c4); }
+  .summary-card:nth-child(5)::after { background: var(--c5); }
+  .summary-card:nth-child(1) { animation-delay: 0.05s; }
+  .summary-card:nth-child(2) { animation-delay: 0.10s; }
+  .summary-card:nth-child(3) { animation-delay: 0.15s; }
+  .summary-card:nth-child(4) { animation-delay: 0.20s; }
+  .summary-card:nth-child(5) { animation-delay: 0.25s; }
+
+  .card-count {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  .card-name {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  .card-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══════════════════════════════
+     TIMELINE VIEW
+  ══════════════════════════════ */
+  #view-timeline { display: block; }
+  #view-calendar { display: none; }
+
+  .timeline-section { padding: 0 48px 48px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .month-ruler { position: relative; margin-bottom: 28px; }
+
+  .ruler-track { height: 1px; background: var(--border); position: relative; margin-top: 22px; }
+
+  .ruler-months { position: relative; width: 100%; height: 18px; }
+
+  .ruler-month {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transform: translateX(2px);
+  }
+
+  .ruler-month.today-month { color: var(--c1); }
+
+  .ruler-tick {
+    position: absolute;
+    top: -5px;
+    width: 1px;
+    height: 12px;
+    background: var(--border);
+  }
+
+  .today-marker {
+    position: absolute;
+    top: -5px;
+    transform: translateX(-50%);
+  }
+
+  .today-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--c1);
+    background: var(--bg);
+    padding: 1px 5px;
+    border: 1px solid var(--c1);
+    border-radius: 3px;
+    white-space: nowrap;
+    letter-spacing: 0.07em;
+  }
+
+  .today-line {
+    position: absolute;
+    width: 1px;
+    background: var(--c1);
+    opacity: 0.5;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .event-tracks { display: flex; flex-direction: column; gap: 2px; }
+
+  .event-group {
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .event-group:nth-child(1) { animation-delay: 0.06s; }
+  .event-group:nth-child(2) { animation-delay: 0.12s; }
+  .event-group:nth-child(3) { animation-delay: 0.18s; }
+  .event-group:nth-child(4) { animation-delay: 0.24s; }
+  .event-group:nth-child(5) { animation-delay: 0.30s; }
+
+  .event-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 7px;
+  }
+
+  .event-color-bar { width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+
+  .event-group-title {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .event-group-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+
+  .track-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 8px 0;
+    position: relative;
+  }
+
+  .track-row {
+    position: relative;
+    height: 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  .track-row:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+    opacity: 0.35;
+  }
+
+  .track-label {
+    width: 220px;
+    flex-shrink: 0;
+    font-size: 0.66rem;
+    color: var(--muted);
+    padding: 0 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-owner {
+    width: 72px;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    padding: 0 8px 0 0;
+    white-space: nowrap;
+  }
+
+  .track-area { flex: 1; position: relative; height: 100%; }
+
+  .task-bar {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 15px;
+    border-radius: 4px;
+    min-width: 5px;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    overflow: hidden;
+  }
+
+  .task-bar:hover {
+    filter: brightness(1.3);
+    transform: translateY(-50%) scaleY(1.15);
+    z-index: 20;
+  }
+
+  .task-bar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    color: rgba(0,0,0,0.75);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+
+  .grid-lines { position: absolute; inset: 0; pointer-events: none; }
+
+  .grid-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+    opacity: 0.4;
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: fixed;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.7rem;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 250px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  .tt-title {
+    font-weight: 700;
+    font-size: 0.74rem;
+    margin-bottom: 7px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .tt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .tt-val { color: var(--text); }
+
+  .tt-owner-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+
+  /* ══════════════════════════════
+     CALENDAR VIEW
+  ══════════════════════════════ */
+  .calendar-section { padding: 0 48px 48px; }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .cal-nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+  }
+
+  .cal-nav-btn:hover { background: var(--surface2); }
+
+  .cal-month-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+    min-width: 160px;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-dow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: center;
+    padding: 6px 0 10px;
+  }
+
+  .cal-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    min-height: 90px;
+    padding: 6px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+
+  .cal-cell.other-month { opacity: 0.35; }
+  .cal-cell.today { border-color: var(--c1); }
+
+  .cal-day-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .today-pip {
+    width: 5px; height: 5px;
+    background: var(--c1);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .cal-task {
+    display: block;
+    font-size: 0.56rem;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgba(0,0,0,0.75);
+    font-weight: 500;
+    transition: filter 0.12s;
+    line-height: 1.5;
+  }
+
+  .cal-task:hover { filter: brightness(1.25); }
+
+  .cal-task-label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cal-overflow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--muted);
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .cal-overflow:hover { color: var(--text); }
+
+  /* owner chip colors */
+  .owner-Madison  { color: var(--madison); }
+  .owner-Courtney { color: var(--courtney); }
+  .owner-Leo      { color: var(--leo); }
+  .owner-Team     { color: var(--team); }
+</style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-row"><span>Event</span><span class="tt-val" id="tt-event"></span></div>
+  <div class="tt-row"><span>Start</span><span class="tt-val" id="tt-start"></span></div>
+  <div class="tt-row"><span>Due</span><span class="tt-val" id="tt-due"></span></div>
+  <div class="tt-row"><span>Duration</span><span class="tt-val" id="tt-dur"></span></div>
+  <div><span class="tt-owner-badge" id="tt-owner-badge"></span></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <h1>Events Collateral <span>Dashboard</span></h1>
+    <div class="header-sub">March — August 2026 &nbsp;·&nbsp; 5 Events &nbsp;·&nbsp; 47 Deliverables</div>
+  </div>
+  <div class="header-right">
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-timeline" onclick="switchView('timeline')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="0" y="3" width="13" height="1.5" rx="0.75" fill="currentColor"/><rect x="0" y="6.25" width="9" height="1.5" rx="0.75" fill="currentColor"/><rect x="0" y="9.5" width="11" height="1.5" rx="0.75" fill="currentColor"/></svg>
+        Timeline
+      </button>
+      <button class="view-btn" id="btn-calendar" onclick="switchView('calendar')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="2" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="5" x2="12" y2="5" stroke="currentColor" stroke-width="1.2"/><line x1="4" y1="1" x2="4" y2="3.5" stroke="currentColor" stroke-width="1.2"/><line x1="9" y1="1" x2="9" y2="3.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Calendar
+      </button>
+    </div>
+    <div class="legends">
+      <div class="legend-group">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--c1)"></span>PH SOC HH</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--c2)"></span>SCNCAC</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--c3)"></span>NCA Leadership</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--c4)"></span>FI Week</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--c5)"></span>DCACC</div>
+      </div>
+      <div class="legend-group">
+        <div class="legend-item"><span class="legend-sq" style="background:var(--madison)"></span>Madison</div>
+        <div class="legend-item"><span class="legend-sq" style="background:var(--courtney)"></span>Courtney</div>
+        <div class="legend-item"><span class="legend-sq" style="background:var(--leo)"></span>Leo</div>
+        <div class="legend-item"><span class="legend-sq" style="background:var(--team)"></span>Team</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-row">
+  <div class="summary-card">
+    <div class="card-count" style="color:var(--c1)">14</div>
+    <div class="card-name">PH SOC Happy Hour</div>
+    <div class="card-date">Event: Apr 22, 2026</div>
+  </div>
+  <div class="summary-card">
+    <div class="card-count" style="color:var(--c2)">6</div>
+    <div class="card-name">SCNCAC Conference</div>
+    <div class="card-date">May 26–29, 2026</div>
+  </div>
+  <div class="summary-card">
+    <div class="card-count" style="color:var(--c3)">10</div>
+    <div class="card-name">NCA Leadership</div>
+    <div class="card-date">Jun 29 – Jul 1, 2026</div>
+  </div>
+  <div class="summary-card">
+    <div class="card-count" style="color:var(--c4)">17</div>
+    <div class="card-name">FI Week</div>
+    <div class="card-date">Jul 6–10, 2026</div>
+  </div>
+  <div class="summary-card">
+    <div class="card-count" style="color:var(--c5)">6</div>
+    <div class="card-name">DCACC Conference</div>
+    <div class="card-date">August 2026</div>
+  </div>
+</div>
+
+<!-- ═══ TIMELINE VIEW ═══ -->
+<div id="view-timeline">
+  <div class="timeline-section">
+    <div class="section-label">Gantt Timeline — due dates from Full Calendar</div>
+    <div id="timeline-wrapper"></div>
+  </div>
+</div>
+
+<!-- ═══ CALENDAR VIEW ═══ -->
+<div id="view-calendar">
+  <div class="calendar-section">
+    <div class="section-label">Calendar View — tasks plotted by due date</div>
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+      <div class="cal-month-label" id="cal-month-label"></div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">&#8250;</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA (from Full Calendar tab, deduplicated) ──
+const TODAY = new Date(2026, 2, 19); // March 19 2026
+
+const OWNER_COLORS = {
+  Madison:  '#f4a853',
+  Courtney: '#c084fc',
+  Leo:      '#4ec9a4',
+  Team:     '#f06a8a',
+};
+
+const EVENT_COLORS = {
+  'PH SOC HH': '#f4a853',
+  'SCNCAC':    '#7b6ef6',
+  'NCA':       '#4ec9a4',
+  'FI Week':   '#f06a8a',
+  'DCACC':     '#5bbcf8',
+};
+
+function getEventColor(ask) {
+  if (ask.startsWith('PH SOC HH')) return EVENT_COLORS['PH SOC HH'];
+  if (ask.startsWith('FI Week'))   return EVENT_COLORS['FI Week'];
+  if (ask.startsWith('NCA'))       return EVENT_COLORS['NCA'];
+  if (ask.startsWith('SCNCAC') || ask.includes('Guardify') || ask.includes('CAC Dems') || ask.includes('CMS Banner') || ask.includes('CMS Flyer') || ask.includes('Capture Banner') || ask.includes('Capture Flyer') || ask.includes('General Guardify')) return EVENT_COLORS['SCNCAC'];
+  if (ask.startsWith('DCACC'))     return EVENT_COLORS['DCACC'];
+  return '#888';
+}
+
+function getEventName(ask) {
+  if (ask.startsWith('PH SOC HH')) return 'PH SOC HH';
+  if (ask.startsWith('FI Week'))   return 'FI Week';
+  if (ask.startsWith('NCA'))       return 'NCA Leadership';
+  if (ask.startsWith('SCNCAC') || ask.includes('Guardify') || ask.includes('CAC Dems') || ask.includes('CMS Banner') || ask.includes('CMS Flyer') || ask.includes('Capture Banner') || ask.includes('Capture Flyer') || ask.includes('General Guardify')) return 'SCNCAC / Shared';
+  if (ask.startsWith('DCACC'))     return 'DCACC';
+  return '—';
+}
+
+const ALL_TASKS = [
+  { ask: 'PH SOC HH Shareable Calendar',                     start: '2026-03-18', due: '2026-03-20', lead: 'Madison'  },
+  { ask: 'PH SOC HH Form',                                   start: '2026-03-16', due: '2026-03-20', lead: 'Courtney' },
+  { ask: 'PH SOC HH Landing Page',                           start: '2026-03-16', due: '2026-03-20', lead: 'Leo'      },
+  { ask: 'PH SOC HH Update Lists',                           start: '2026-03-19', due: '2026-03-24', lead: 'Courtney' },
+  { ask: 'PH SOC HH Share LP Links Internally',              start: '2026-03-24', due: '2026-03-24', lead: 'Courtney' },
+  { ask: 'PH SOC HH Invite Email 1',                         start: '2026-03-18', due: '2026-03-24', lead: 'Madison'  },
+  { ask: 'PH SOC HH Invite Email 2',                         start: '2026-03-18', due: '2026-04-02', lead: 'Madison'  },
+  { ask: 'PH SOC HH Invite Flyer',                           start: '2026-03-16', due: '2026-04-10', lead: 'Leo'      },
+  { ask: 'PH SOC HH Invite Form Boards',                     start: '2026-03-16', due: '2026-04-10', lead: 'Leo'      },
+  { ask: 'PH SOC HH Invite Email 3',                         start: '2026-03-18', due: '2026-04-14', lead: 'Madison'  },
+  { ask: 'PH SOC HH Invite Email 4',                         start: '2026-03-18', due: '2026-04-20', lead: 'Madison'  },
+  { ask: 'PH SOC HH Drink Menu Flyer',                       start: '2026-04-15', due: '2026-04-21', lead: 'Madison'  },
+  { ask: 'PH SOC HH Day of Instructions Email',              start: '2026-04-15', due: '2026-04-22', lead: 'Madison'  },
+  { ask: 'PH SOC HH Guardify Themed Selfie Station',         start: '2026-03-19', due: '2026-04-22', lead: 'Madison'  },
+  { ask: 'FI Week New Brand Design',                         start: '2026-03-16', due: '2026-04-20', lead: 'Leo'      },
+  { ask: 'FI Week Landing Page',                             start: '2026-04-15', due: '2026-04-30', lead: 'Leo'      },
+  { ask: 'FI Week Shopify Updated',                          start: '2026-04-15', due: '2026-05-01', lead: 'Madison'  },
+  { ask: 'FI Week Newsletter Promo Banner May',              start: '2026-04-15', due: '2026-05-01', lead: 'Madison'  },
+  { ask: 'FI Week NCA Trak Banner – May 15-30',              start: '2026-04-25', due: '2026-05-08', lead: 'Courtney' },
+  { ask: 'FI Week General Banner',                           start: '2026-04-15', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'FI Week Save the Date / Countdown Email',          start: '2026-05-01', due: '2026-05-15', lead: 'Madison'  },
+  { ask: 'FI Week QR Code Flyer',                            start: '2026-05-01', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'FI Week Custom Signature',                         start: '2026-05-01', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'CAC Dems Banner',                                  start: '2026-04-15', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'CMS Banner',                                       start: '2026-04-15', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'Capture Banner',                                   start: '2026-04-01', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'CAC Dems Flyer',                                   start: '2026-04-15', due: '2026-05-15', lead: 'Madison'  },
+  { ask: 'CMS Flyer',                                        start: '2026-04-15', due: '2026-05-15', lead: 'Madison'  },
+  { ask: 'Capture Flyer',                                    start: '2026-04-01', due: '2026-05-15', lead: 'Madison'  },
+  { ask: 'General Guardify Banner',                          start: '2026-04-15', due: '2026-05-15', lead: 'Leo'      },
+  { ask: 'FI Week NCA Trak Banner – June 1-19',              start: '2026-05-14', due: '2026-05-24', lead: 'Courtney' },
+  { ask: 'NCA Leadership Yeti Cooler Flyer',                 start: '2026-05-15', due: '2026-05-31', lead: 'Leo'      },
+  { ask: 'NCA Leadership Happy Hour LP',                     start: '2026-05-15', due: '2026-05-31', lead: 'Leo'      },
+  { ask: 'NCA Leadership Happy Hour Registration Form',      start: '2026-05-15', due: '2026-05-31', lead: 'Courtney' },
+  { ask: 'NCA Leadership Happy Hour Cards',                  start: '2026-05-15', due: '2026-05-31', lead: 'Madison'  },
+  { ask: 'NCA Leadership NCATrak Reporting Banner/Flyer',    start: '2026-04-15', due: '2026-05-31', lead: 'Leo'      },
+  { ask: 'FI Week Nominations Open Email 1',                 start: '2026-05-15', due: '2026-06-01', lead: 'Madison'  },
+  { ask: 'FI Week Newsletter Promo Banner June',             start: '2026-04-15', due: '2026-06-05', lead: 'Madison'  },
+  { ask: 'FI Week Nominations Open Email 2',                 start: '2026-05-15', due: '2026-06-10', lead: 'Madison'  },
+  { ask: 'NCA Leadership Attendee Social Template',          start: '2026-06-01', due: '2026-06-15', lead: 'Madison'  },
+  { ask: 'FI Week Media Kits (Public & Recipients)',         start: '2026-06-01', due: '2026-07-01', lead: 'Leo'      },
+  { ask: 'FI Week Newsletter Ben Blog July',                 start: '2026-06-25', due: '2026-07-03', lead: 'Madison'  },
+  { ask: 'FI Week Winner Announcements IRL',                 start: '2026-04-22', due: '2026-07-06', lead: 'Team'     },
+  { ask: 'FI Week Social Posts (06/01–07/10)',               start: '2026-05-15', due: '2026-07-10', lead: 'Madison'  },
+  { ask: 'NCA Leadership OOH Advertising',                   start: null,         due: null,          lead: 'Courtney' },
+  { ask: 'NCA Leadership Spotlight Article',                 start: null,         due: null,          lead: 'Courtney' },
+  { ask: 'NCA Leadership Attendee Bag Flyer/Agenda Ad',      start: null,         due: null,          lead: 'Courtney' },
+  { ask: 'DCACC Virtual Booth',                              start: null,         due: '2026-07-24',  lead: 'Team'     },
+  { ask: 'DCACC Banner',                                     start: '2026-07-01', due: '2026-07-17',  lead: 'Leo'      },
+  { ask: 'DCACC Company Description',                        start: '2026-07-15', due: '2026-07-17',  lead: 'Madison'  },
+  { ask: 'DCACC Website Links',                              start: '2026-07-15', due: '2026-07-17',  lead: 'Courtney' },
+  { ask: 'DCACC Product Brochures',                          start: '2026-07-15', due: '2026-07-17',  lead: 'Leo'      },
+  { ask: 'DCACC Social Posts',                               start: null,         due: '2026-07-25',  lead: 'Madison'  },
+];
+
+// Group by event for timeline
+const EVENT_GROUPS = [
+  {
+    name: 'PH SOC HH',
+    date: 'Apr 22, 2026',
+    color: '#f4a853',
+    tasks: ALL_TASKS.filter(t => t.ask.startsWith('PH SOC HH'))
+  },
+  {
+    name: 'SCNCAC / Shared Assets',
+    date: 'May 26–29, 2026',
+    color: '#7b6ef6',
+    tasks: ALL_TASKS.filter(t => ['CAC Dems Banner','CMS Banner','Capture Banner','CAC Dems Flyer','CMS Flyer','Capture Flyer','General Guardify Banner'].includes(t.ask))
+  },
+  {
+    name: 'NCA Leadership',
+    date: 'Jun 29 – Jul 1, 2026',
+    color: '#4ec9a4',
+    tasks: ALL_TASKS.filter(t => t.ask.startsWith('NCA'))
+  },
+  {
+    name: 'FI Week',
+    date: 'Jul 6–10, 2026',
+    color: '#f06a8a',
+    tasks: ALL_TASKS.filter(t => t.ask.startsWith('FI Week'))
+  },
+  {
+    name: 'DCACC',
+    date: 'August 2026',
+    color: '#5bbcf8',
+    tasks: ALL_TASKS.filter(t => t.ask.startsWith('DCACC'))
+  },
+];
+
+const TIMELINE_START = new Date(2026, 2, 10);
+const TIMELINE_END   = new Date(2026, 7, 5);
+const TOTAL_DAYS = (TIMELINE_END - TIMELINE_START) / 86400000;
+
+function dayOff(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return (d - TIMELINE_START) / 86400000;
+}
+
+function pct(d) { return (d / TOTAL_DAYS) * 100; }
+
+function fmtDate(dateStr) {
+  if (!dateStr) return 'TBD';
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ═══ VIEW SWITCH ═══
+function switchView(v) {
+  document.getElementById('view-timeline').style.display = v === 'timeline' ? 'block' : 'none';
+  document.getElementById('view-calendar').style.display = v === 'calendar'  ? 'block' : 'none';
+  document.getElementById('btn-timeline').classList.toggle('active', v === 'timeline');
+  document.getElementById('btn-calendar').classList.toggle('active', v === 'calendar');
+  if (v === 'calendar') renderCalendar();
+}
+
+// ═══ TIMELINE ═══
+function buildTimeline() {
+  const wrapper = document.getElementById('timeline-wrapper');
+
+  // Month ruler
+  const months = [];
+  let cur = new Date(2026, 2, 1);
+  while (cur <= TIMELINE_END) { months.push(new Date(cur)); cur.setMonth(cur.getMonth() + 1); }
+
+  const todayPct = pct((TODAY - TIMELINE_START) / 86400000);
+
+  const rulerEl = document.createElement('div');
+  rulerEl.className = 'month-ruler';
+  rulerEl.innerHTML = `
+    <div class="ruler-months" style="position:relative;height:18px">
+      ${months.map(m => {
+        const p = pct((m - TIMELINE_START) / 86400000);
+        const isTM = m.getMonth() === TODAY.getMonth();
+        return `<span class="ruler-month ${isTM ? 'today-month':''}" style="left:${p}%">
+          ${m.toLocaleString('default',{month:'short'}).toUpperCase()} '${String(m.getFullYear()).slice(2)}
+        </span>`;
+      }).join('')}
+    </div>
+    <div class="ruler-track">
+      ${months.map(m => `<div class="ruler-tick" style="left:${pct((m-TIMELINE_START)/86400000)}%"></div>`).join('')}
+      <div class="today-marker" style="left:${todayPct}%">
+        <span class="today-label">TODAY</span>
+      </div>
+      <div class="today-line" style="left:${todayPct}%;height:9999px;top:0"></div>
+    </div>
+  `;
+  wrapper.appendChild(rulerEl);
+
+  const tracksDiv = document.createElement('div');
+  tracksDiv.className = 'event-tracks';
+
+  EVENT_GROUPS.forEach(ev => {
+    const group = document.createElement('div');
+    group.className = 'event-group';
+    group.innerHTML = `
+      <div class="event-group-header">
+        <div class="event-color-bar" style="background:${ev.color}"></div>
+        <div class="event-group-title" style="color:${ev.color}">${ev.name}</div>
+        <div class="event-group-date">${ev.date}</div>
+      </div>
+    `;
+
+    const container = document.createElement('div');
+    container.className = 'track-container';
+
+    // Grid lines
+    const gl = document.createElement('div');
+    gl.className = 'grid-lines';
+    gl.innerHTML = months.map(m => {
+      const p = pct((m - TIMELINE_START) / 86400000);
+      return `<div class="grid-line" style="left:calc(292px + ${p}% * (100% - 292px) / 100)"></div>`;
+    }).join('');
+    container.appendChild(gl);
+
+    ev.tasks.forEach(task => {
+      const row = document.createElement('div');
+      row.className = 'track-row';
+
+      const sOff = task.start ? dayOff(task.start) : null;
+      const dOff = task.due   ? dayOff(task.due)   : null;
+      const ownerColor = OWNER_COLORS[task.lead] || '#888';
+
+      let barHTML = '';
+      if (sOff !== null && dOff !== null) {
+        const left  = pct(Math.max(0, sOff));
+        const right = pct(Math.min(TOTAL_DAYS, dOff));
+        const width = Math.max(right - left, 0.25);
+        const dur   = Math.round(dOff - sOff);
+        barHTML = `<div class="task-bar"
+          style="left:${left}%;width:${width}%;background:${ev.color};opacity:0.82"
+          data-title="${task.ask.replace(/"/g,'&quot;')}"
+          data-event="${ev.name}"
+          data-start="${fmtDate(task.start)}"
+          data-due="${fmtDate(task.due)}"
+          data-dur="${dur} day${dur!==1?'s':''}"
+          data-lead="${task.lead}"
+          data-leadcolor="${ownerColor}"
+        ><span class="task-bar-label">${task.ask}</span></div>`;
+      } else if (dOff !== null) {
+        const pos = pct(Math.min(TOTAL_DAYS, dOff));
+        barHTML = `<div class="task-bar"
+          style="left:${pos}%;width:0.6%;background:${ev.color};opacity:0.7"
+          data-title="${task.ask.replace(/"/g,'&quot;')}"
+          data-event="${ev.name}"
+          data-start="TBD"
+          data-due="${fmtDate(task.due)}"
+          data-dur="—"
+          data-lead="${task.lead}"
+          data-leadcolor="${ownerColor}"
+        ></div>`;
+      }
+
+      // Short label for display (strip event prefix)
+      const shortLabel = task.ask
+        .replace(/^PH SOC HH /,'')
+        .replace(/^FI Week /,'')
+        .replace(/^NCA Leadership /,'')
+        .replace(/^DCACC /,'');
+
+      row.innerHTML = `
+        <div class="track-label" title="${task.ask}">${shortLabel}</div>
+        <div class="track-owner owner-${task.lead}" style="color:${ownerColor};font-family:'DM Mono',monospace;font-size:0.58rem;width:72px;flex-shrink:0;padding-right:8px;white-space:nowrap;">${task.lead}</div>
+        <div class="track-area">${barHTML}</div>
+      `;
+      container.appendChild(row);
+    });
+
+    group.appendChild(container);
+    tracksDiv.appendChild(group);
+  });
+
+  wrapper.appendChild(tracksDiv);
+
+  // Tooltip
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.task-bar').forEach(bar => {
+    bar.addEventListener('mouseenter', () => {
+      document.getElementById('tt-title').textContent    = bar.dataset.title;
+      document.getElementById('tt-event').textContent    = bar.dataset.event;
+      document.getElementById('tt-start').textContent    = bar.dataset.start;
+      document.getElementById('tt-due').textContent      = bar.dataset.due;
+      document.getElementById('tt-dur').textContent      = bar.dataset.dur;
+      const ob = document.getElementById('tt-owner-badge');
+      ob.textContent   = bar.dataset.lead;
+      ob.style.background = bar.dataset.leadcolor + '33';
+      ob.style.color      = bar.dataset.leadcolor;
+      ob.style.border     = `1px solid ${bar.dataset.leadcolor}55`;
+      tooltip.classList.add('visible');
+    });
+    bar.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top  = (e.clientY - 50) + 'px';
+    });
+    bar.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+  });
+}
+
+// ═══ CALENDAR ═══
+let calYear = 2026, calMonth = 2; // start on March
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const label = document.getElementById('cal-month-label');
+  label.textContent = new Date(calYear, calMonth, 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Day-of-week headers
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-dow';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  // Build due-date index
+  const tasksByDue = {};
+  ALL_TASKS.forEach(t => {
+    if (!t.due) return;
+    const key = t.due; // 'YYYY-MM-DD'
+    if (!tasksByDue[key]) tasksByDue[key] = [];
+    tasksByDue[key].push(t);
+  });
+
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+
+    let day, month = calMonth, year = calYear, otherMonth = false;
+    if (i < firstDay) {
+      day = daysInPrev - firstDay + 1 + i;
+      month = calMonth - 1;
+      if (month < 0) { month = 11; year--; }
+      otherMonth = true;
+    } else if (i >= firstDay + daysInMonth) {
+      day = i - firstDay - daysInMonth + 1;
+      month = calMonth + 1;
+      if (month > 11) { month = 0; year++; }
+      otherMonth = true;
+    } else {
+      day = i - firstDay + 1;
+    }
+
+    if (otherMonth) cell.classList.add('other-month');
+
+    const isToday = !otherMonth &&
+      day === TODAY.getDate() &&
+      calMonth === TODAY.getMonth() &&
+      calYear  === TODAY.getFullYear();
+    if (isToday) cell.classList.add('today');
+
+    const mm = String(month + 1).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    const dateKey = `${year}-${mm}-${dd}`;
+
+    cell.innerHTML = `<div class="cal-day-num">${isToday ? '<span class="today-pip"></span>' : ''}${day}</div>`;
+
+    const dayTasks = tasksByDue[dateKey] || [];
+    const MAX_SHOW = 3;
+    dayTasks.slice(0, MAX_SHOW).forEach(t => {
+      const chip = document.createElement('div');
+      chip.className = 'cal-task';
+      const ec = getEventColor(t.ask);
+      const oc = OWNER_COLORS[t.lead] || '#888';
+      chip.style.background = ec;
+      // Short label
+      const short = t.ask
+        .replace(/^PH SOC HH /,'')
+        .replace(/^FI Week /,'')
+        .replace(/^NCA Leadership /,'')
+        .replace(/^DCACC /,'');
+      chip.innerHTML = `<span class="cal-task-label" title="${t.ask}">${short}</span>`;
+
+      // Owner dot
+      const dot = document.createElement('span');
+      dot.style.cssText = `display:inline-block;width:5px;height:5px;border-radius:50%;background:${oc};border:1px solid rgba(0,0,0,0.4);margin-right:3px;vertical-align:middle;flex-shrink:0;`;
+      chip.prepend(dot);
+
+      // Tooltip
+      chip.addEventListener('mouseenter', e => {
+        document.getElementById('tt-title').textContent    = t.ask;
+        document.getElementById('tt-event').textContent    = getEventName(t.ask);
+        document.getElementById('tt-start').textContent    = fmtDate(t.start);
+        document.getElementById('tt-due').textContent      = fmtDate(t.due);
+        document.getElementById('tt-dur').textContent      = t.start && t.due ? Math.round((new Date(t.due)-new Date(t.start))/86400000)+' days' : '—';
+        const ob = document.getElementById('tt-owner-badge');
+        ob.textContent = t.lead;
+        ob.style.background = oc + '33';
+        ob.style.color      = oc;
+        ob.style.border     = `1px solid ${oc}55`;
+        document.getElementById('tooltip').classList.add('visible');
+      });
+      chip.addEventListener('mousemove', e => {
+        document.getElementById('tooltip').style.left = (e.clientX+14)+'px';
+        document.getElementById('tooltip').style.top  = (e.clientY-50)+'px';
+      });
+      chip.addEventListener('mouseleave', () => document.getElementById('tooltip').classList.remove('visible'));
+
+      cell.appendChild(chip);
+    });
+
+    if (dayTasks.length > MAX_SHOW) {
+      const more = document.createElement('div');
+      more.className = 'cal-overflow';
+      more.textContent = `+${dayTasks.length - MAX_SHOW} more`;
+      cell.appendChild(more);
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+// ── INIT ──
+buildTimeline();
+</script>
+</body>
+</html>
