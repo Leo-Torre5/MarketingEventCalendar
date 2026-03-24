@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Events Collateral Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap');
 
   :root {
-    --bg: #0c0e14;
-    --surface: #13151e;
-    --surface2: #1a1d2a;
-    --border: rgba(255,255,255,0.07);
-    --text: #e8eaf0;
-    --muted: #6b7080;
-    --c1: #f4a853;
-    --c2: #7b6ef6;
-    --c3: #4ec9a4;
+    --bg: #f3f3f3;
+    --surface: #ffffff;
+    --surface2: #eaf4fb;
+    --border: rgba(25,28,53,0.10);
+    --text: #191C35;
+    --muted: #767676;
+    --c1: #006FA7;
+    --c2: #002169;
+    --c3: #44c5e2;
     --c4: #f06a8a;
-    --c5: #5bbcf8;
-    --madison: #f4a853;
-    --courtney: #c084fc;
-    --leo: #4ec9a4;
-    --team: #f06a8a;
+    --c5: #191C35;
+    --madison: #006FA7;
+    --courtney: #44c5e2;
+    --leo: #002169;
+    --team: #767676;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +30,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -56,8 +56,9 @@
   }
 
   .header-left h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Poppins', sans-serif;
     font-size: clamp(1.8rem, 3.5vw, 2.9rem);
+    font-weight: 800;
     line-height: 1;
     letter-spacing: -0.02em;
   }
@@ -65,10 +66,10 @@
   .header-left h1 span { color: var(--c1); font-style: italic; }
 
   .header-sub {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.68rem;
     color: var(--muted);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-top: 8px;
   }
@@ -91,7 +92,7 @@
 
   .view-btn {
     padding: 8px 20px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -127,7 +128,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.62rem;
     color: var(--muted);
     letter-spacing: 0.04em;
@@ -177,7 +178,7 @@
   .summary-card:nth-child(5) { animation-delay: 0.25s; }
 
   .card-count {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 1.9rem;
     line-height: 1;
     margin-bottom: 3px;
@@ -193,7 +194,7 @@
   }
 
   .card-date {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.58rem;
     color: var(--muted);
     margin-top: 5px;
@@ -213,7 +214,7 @@
   .timeline-section { padding: 0 48px 48px; }
 
   .section-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -229,7 +230,7 @@
 
   .ruler-month {
     position: absolute;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.6rem;
     color: var(--muted);
     letter-spacing: 0.1em;
@@ -254,7 +255,7 @@
   }
 
   .today-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.58rem;
     color: var(--c1);
     background: var(--bg);
@@ -306,7 +307,7 @@
   }
 
   .event-group-date {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.6rem;
     color: var(--muted);
     margin-left: auto;
@@ -352,7 +353,7 @@
   .track-owner {
     width: 72px;
     flex-shrink: 0;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.58rem;
     padding: 0 8px 0 0;
     white-space: nowrap;
@@ -382,9 +383,9 @@
   }
 
   .task-bar-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.52rem;
-    color: rgba(0,0,0,0.75);
+    color: rgba(255,255,255,0.9);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -414,7 +415,7 @@
     opacity: 0;
     transition: opacity 0.15s;
     max-width: 250px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 28px rgba(25,28,53,0.12);
   }
 
   .tooltip.visible { opacity: 1; }
@@ -431,7 +432,7 @@
     display: flex;
     justify-content: space-between;
     gap: 14px;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.6rem;
     color: var(--muted);
     line-height: 1.8;
@@ -444,7 +445,7 @@
     padding: 1px 7px;
     border-radius: 10px;
     font-size: 0.6rem;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-weight: 500;
     margin-top: 6px;
   }
@@ -476,7 +477,7 @@
   .cal-nav-btn:hover { background: var(--surface2); }
 
   .cal-month-label {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 1.3rem;
     letter-spacing: -0.01em;
     min-width: 160px;
@@ -489,7 +490,7 @@
   }
 
   .cal-dow {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.58rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -512,7 +513,7 @@
   .cal-cell.today { border-color: var(--c1); }
 
   .cal-day-num {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.62rem;
     color: var(--muted);
     margin-bottom: 4px;
@@ -531,7 +532,7 @@
   .cal-task {
     display: block;
     font-size: 0.56rem;
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     padding: 2px 5px;
     border-radius: 3px;
     margin-bottom: 2px;
@@ -539,7 +540,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: rgba(0,0,0,0.75);
+    color: rgba(255,255,255,0.9);
     font-weight: 500;
     transition: filter 0.12s;
     line-height: 1.5;
@@ -555,7 +556,7 @@
   }
 
   .cal-overflow {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.52rem;
     color: var(--muted);
     margin-top: 2px;
@@ -585,6 +586,7 @@
 <!-- HEADER -->
 <header>
   <div class="header-left">
+    <img src="guardify-logo.png" alt="Guardify" style="height:36px;margin-bottom:10px;display:block;">
     <h1>Events Collateral <span>Dashboard</span></h1>
     <div class="header-sub">March — August 2026 &nbsp;·&nbsp; 5 Events &nbsp;·&nbsp; 47 Deliverables</div>
   </div>
@@ -674,18 +676,18 @@
 const TODAY = new Date(2026, 2, 19); // March 19 2026
 
 const OWNER_COLORS = {
-  Madison:  '#f4a853',
-  Courtney: '#c084fc',
-  Leo:      '#4ec9a4',
-  Team:     '#f06a8a',
+  Madison:  '#006FA7',
+  Courtney: '#44c5e2',
+  Leo:      '#002169',
+  Team:     '#767676',
 };
 
 const EVENT_COLORS = {
-  'PH SOC HH': '#f4a853',
-  'SCNCAC':    '#7b6ef6',
-  'NCA':       '#4ec9a4',
-  'FI Week':   '#f06a8a',
-  'DCACC':     '#5bbcf8',
+  'PH SOC HH': '#006FA7',
+  'SCNCAC':    '#002169',
+  'NCA':       '#44c5e2',
+  'FI Week':   '#191C35',
+  'DCACC':     '#767676',
 };
 
 function getEventColor(ask) {
@@ -767,31 +769,31 @@ const EVENT_GROUPS = [
   {
     name: 'PH SOC HH',
     date: 'Apr 22, 2026',
-    color: '#f4a853',
+    color: '#006FA7',
     tasks: ALL_TASKS.filter(t => t.ask.startsWith('PH SOC HH'))
   },
   {
     name: 'SCNCAC / Shared Assets',
     date: 'May 26–29, 2026',
-    color: '#7b6ef6',
+    color: '#002169',
     tasks: ALL_TASKS.filter(t => ['CAC Dems Banner','CMS Banner','Capture Banner','CAC Dems Flyer','CMS Flyer','Capture Flyer','General Guardify Banner'].includes(t.ask))
   },
   {
     name: 'NCA Leadership',
     date: 'Jun 29 – Jul 1, 2026',
-    color: '#4ec9a4',
+    color: '#44c5e2',
     tasks: ALL_TASKS.filter(t => t.ask.startsWith('NCA'))
   },
   {
     name: 'FI Week',
     date: 'Jul 6–10, 2026',
-    color: '#f06a8a',
+    color: '#191C35',
     tasks: ALL_TASKS.filter(t => t.ask.startsWith('FI Week'))
   },
   {
     name: 'DCACC',
     date: 'August 2026',
-    color: '#5bbcf8',
+    color: '#767676',
     tasks: ALL_TASKS.filter(t => t.ask.startsWith('DCACC'))
   },
 ];
@@ -928,7 +930,7 @@ function buildTimeline() {
 
       row.innerHTML = `
         <div class="track-label" title="${task.ask}">${shortLabel}</div>
-        <div class="track-owner owner-${task.lead}" style="color:${ownerColor};font-family:'DM Mono',monospace;font-size:0.58rem;width:72px;flex-shrink:0;padding-right:8px;white-space:nowrap;">${task.lead}</div>
+        <div class="track-owner owner-${task.lead}" style="color:${ownerColor};font-family:'Poppins',sans-serif;font-size:0.58rem;width:72px;flex-shrink:0;padding-right:8px;white-space:nowrap;">${task.lead}</div>
         <div class="track-area">${barHTML}</div>
       `;
       container.appendChild(row);
